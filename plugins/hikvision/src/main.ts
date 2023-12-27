@@ -422,6 +422,19 @@ class HikvisionCamera extends RtspSmartCamera implements Camera, Intercom, Reboo
         const ffmpegInput = JSON.parse(buffer.toString()) as FFmpegInput;
 
         const passthrough = new PassThrough();
+
+        const hangup = `http://${this.getHttpAddress()}/ISAPI/VideoIntercom/callSignal?format=json`;
+        const { data } = await this.getClient().digestAuth.request({
+            httpsAgent: hikvisionHttpsAgent,
+            method: 'PUT',
+            url: hangup,
+            data: {
+                CallSignal: {
+                    cmdType: 'hangUp'
+                            }
+             });
+        this.console.log('call hangup on Hikvision', data);
+        
         const open = `http://${this.getHttpAddress()}/ISAPI/System/TwoWayAudio/channels/${channel}/open`;
         const { data } = await this.getClient().digestAuth.request({
             httpsAgent: hikvisionHttpsAgent,
@@ -429,6 +442,7 @@ class HikvisionCamera extends RtspSmartCamera implements Camera, Intercom, Reboo
             url: open,
         });
         this.console.log('two way audio opened', data);
+
 
         const url = `http://${this.getHttpAddress()}/ISAPI/System/TwoWayAudio/channels/${channel}/audioData`;
         this.console.log('posting audio data to', url);
