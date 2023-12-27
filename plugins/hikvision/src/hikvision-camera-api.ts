@@ -110,7 +110,7 @@ export class HikvisionCameraAPI {
     }
 
     async jpegSnapshot(channel: string): Promise<Buffer> {
-        const url = `http://${this.ip}/ISAPI/Streaming/channels/${getChannel(channel)}/picture?snapShotImageType=JPEG`
+        const url = `http://${this.ip}/ISAPI/Streaming/channels/${getChannel(channel)}/picture`
 
         const response = await this.digestAuth.request({
             httpsAgent: hikvisionHttpsAgent,
